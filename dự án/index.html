@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Adventure Time: Dungeon Quest</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-wrapper">
+        <canvas id="gameCanvas" width="960" height="540"></canvas>
+
+        <!-- TRANG CHỦ -->
+        <div id="home-screen" class="screen-overlay active">
+            <div class="title-box">
+                <span class="sub-banner">LAND OF OOO PRESENTS</span>
+                <h1 class="main-title">ADVENTURE TIME<br><span class="gold-text">DUNGEON QUEST</span></h1>
+            </div>
+            <div class="menu-buttons">
+                <button id="btn-start" class="pixel-btn primary-btn">▶ BẮT ĐẦU</button>
+                <button id="btn-char-select" class="pixel-btn">⚔ CHỌN NHÂN VẬT</button>
+                <button id="btn-settings" class="pixel-btn">⚙ CÀI ĐẶT</button>
+                <button id="btn-info" class="pixel-btn">📜 THÔNG TIN</button>
+            </div>
+            <div id="selected-hero-pill" class="hero-pill">Nhân vật hiện tại: <strong id="home-hero-name">Finn</strong></div>
+        </div>
+
+        <!-- CHỌN NHÂN VẬT -->
+        <div id="char-screen" class="screen-overlay">
+            <div class="panel-window wide-window">
+                <h2 class="panel-title">CHỌN ANH HÙNG XỨ OOO</h2>
+                <div class="char-grid" id="char-list"></div>
+                <div id="char-detail-box" class="char-detail-box">
+                    <div class="char-preview-col">
+                        <canvas id="charPreviewCanvas" width="96" height="96"></canvas>
+                        <h3 id="detail-name">Finn the Human</h3>
+                        <span id="detail-role" class="role-badge">Chiến Binh Cân Bằng</span>
+                    </div>
+                    <div class="char-info-col">
+                        <p id="detail-desc">Cậu bé anh hùng dũng cảm của xứ Ooo, thông thạo kiếm thuật và tốc độ chiến đấu bền bỉ.</p>
+                        <div class="stats-bars">
+                            <div class="stat-row"><span>Máu (HP):</span><div class="bar-bg"><div id="stat-hp" class="bar-fill hp"></div></div><b id="val-hp">130</b></div>
+                            <div class="stat-row"><span>Tốc độ:</span><div class="bar-bg"><div id="stat-spd" class="bar-fill spd"></div></div><b id="val-spd">175</b></div>
+                            <div class="stat-row"><span>Sát thương:</span><div class="bar-bg"><div id="stat-dmg" class="bar-fill dmg"></div></div><b id="val-dmg">18</b></div>
+                            <div class="stat-row"><span>Tầm đánh:</span><div class="bar-bg"><div id="stat-rng" class="bar-fill rng"></div></div><b id="val-rng">Cận chiến</b></div>
+                        </div>
+                        <div class="skills-preview" id="detail-skills"></div>
+                    </div>
+                </div>
+                <div class="panel-actions">
+                    <button id="btn-back-home-char" class="pixel-btn">⬅ TRANG CHỦ</button>
+                    <button id="btn-confirm-play" class="pixel-btn primary-btn">VÀO DUNGEON ▶</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CÀI ĐẶT -->
+        <div id="settings-screen" class="screen-overlay">
+            <div class="panel-window">
+                <h2 class="panel-title">CÀI ĐẶT ÂM THANH</h2>
+                <div class="setting-row">
+                    <span>Nhạc nền (BGM):</span>
+                    <button id="toggle-music" class="pixel-btn small-btn">BẬT</button>
+                </div>
+                <div class="setting-row">
+                    <span>Hiệu ứng (SFX):</span>
+                    <button id="toggle-sfx" class="pixel-btn small-btn">BẬT</button>
+                </div>
+                <div class="setting-row">
+                    <span>Âm lượng tổng:</span>
+                    <input type="range" id="volume-slider" min="0" max="100" value="70">
+                    <span id="volume-val">70%</span>
+                </div>
+                <div class="panel-actions">
+                    <button id="btn-close-settings" class="pixel-btn primary-btn">LƯU & ĐÓNG</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- THÔNG TIN -->
+        <div id="info-screen" class="screen-overlay">
+            <div class="panel-window">
+                <h2 class="panel-title">HƯỚNG DẪN & ĐIỀU KHIỂN</h2>
+                <div class="info-content">
+                    <p><strong>Cốt truyện:</strong> Thế lực bóng tối của Lich và Ice King đã phong ấn các hầm ngục dưới Lâu Đài Kẹo. Hãy vượt qua 3 tầng Dungeon và đánh bại Trùm Cuối ở tầng 3!</p>
+                    <ul class="key-list">
+                        <li><kbd>WASD</kbd> / <kbd>Phím Mũi Tên</kbd> : Di chuyển 4 hướng</li>
+                        <li><kbd>J</kbd> hoặc <kbd>Chuột Trái</kbd> : Đánh thường theo hướng nhìn/chuột</li>
+                        <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> : Thi triển 3 kỹ năng đặc trưng</li>
+                        <li><kbd>E</kbd> : Mở rương / Nhặt vật phẩm dưới đất</li>
+                        <li><kbd>Q</kbd> : Đổi nhanh vũ khí trong hành trang</li>
+                        <li><kbd>I</kbd> : Mở / Đóng Kho Đồ (Inventory)</li>
+                        <li><kbd>ESC</kbd> : Tạm dừng trò chơi</li>
+                    </ul>
+                </div>
+                <div class="panel-actions">
+                    <button id="btn-close-info" class="pixel-btn primary-btn">ĐÃ HIỂU</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HUD TRONG GAME -->
+        <div id="hud-layer" class="hidden">
+            <div class="hud-top-left">
+                <div class="hero-badge">
+                    <div id="hud-avatar" class="avatar-box"></div>
+                    <div class="bars-container">
+                        <div class="hud-name-row">
+                            <span id="hud-char-name">Finn</span>
+                            <span id="hud-gold" class="gold-label">🪙 0</span>
+                        </div>
+                        <div class="hud-bar hp-bar">
+                            <div id="hud-hp-fill" class="fill"></div>
+                            <span id="hud-hp-text">120/120</span>
+                        </div>
+                        <div class="hud-bar mp-bar">
+                            <div id="hud-mp-fill" class="fill"></div>
+                            <span id="hud-mp-text">100/100</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dungeon-status">
+                    <div id="hud-floor">Tầng 1: Hầm Ngục Kẹo Ngọt</div>
+                    <div id="hud-enemies">Quái trong phòng: 0</div>
+                    <div id="hud-room-lock" class="lock-status unlocked">🔓 Cửa Mở</div>
+                </div>
+            </div>
+
+            <div id="boss-hud" class="boss-hud hidden">
+                <div id="boss-name">THE LICH & ICE KING TITAN</div>
+                <div class="boss-bar-bg">
+                    <div id="boss-hp-fill" class="boss-hp-fill"></div>
+                </div>
+            </div>
+
+            <div class="hud-top-right">
+                <canvas id="minimapCanvas" width="150" height="110"></canvas>
+                <div class="hud-Quick-btns">
+                    <button id="btn-hud-inv" class="hud-icon-btn" title="Kho đồ (I)">🎒 <small>I</small></button>
+                    <button id="btn-hud-swap" class="hud-icon-btn" title="Đổi vũ khí (Q)">⚔ <small>Q</small></button>
+                    <button id="btn-hud-pause" class="hud-icon-btn" title="Tạm dừng (ESC)">⏸</button>
+                </div>
+            </div>
+
+            <div class="hud-bottom-bar">
+                <div id="equipped-weapon-slot" class="weapon-slot" title="Bấm Q để đổi vũ khí">
+                    <div class="slot-key">Q</div>
+                    <div id="hud-weapon-icon" class="weapon-icon">🗡️</div>
+                    <div class="weapon-meta">
+                        <span id="hud-weapon-name">Kiếm Scarlet</span>
+                        <small id="hud-weapon-dmg">DMG: 15</small>
+                    </div>
+                </div>
+
+                <div class="skills-bar">
+                    <div class="skill-slot" id="skill-slot-0" data-idx="0">
+                        <span class="slot-key">1</span>
+                        <div class="skill-icon" id="skill-icon-0">⚔️</div>
+                        <div class="skill-name" id="skill-name-0">Chém Xoáy</div>
+                        <div class="cd-overlay" id="skill-cd-0"></div>
+                    </div>
+                    <div class="skill-slot" id="skill-slot-1" data-idx="1">
+                        <span class="slot-key">2</span>
+                        <div class="skill-icon" id="skill-icon-1">💥</div>
+                        <div class="skill-name" id="skill-name-1">Nhát Chém Mạnh</div>
+                        <div class="cd-overlay" id="skill-cd-1"></div>
+                    </div>
+                    <div class="skill-slot" id="skill-slot-2" data-idx="2">
+                        <span class="slot-key">3</span>
+                        <div class="skill-icon" id="skill-icon-2">⚡</div>
+                        <div class="skill-name" id="skill-name-2">Tăng Tốc</div>
+                        <div class="cd-overlay" id="skill-cd-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="toast-container"></div>
+
+            <div id="mobile-controls">
+                <div class="dpad-container">
+                    <button class="dpad-btn up" data-dir="up">▲</button>
+                    <button class="dpad-btn left" data-dir="left">◀</button>
+                    <button class="dpad-btn right" data-dir="right">▶</button>
+                    <button class="dpad-btn down" data-dir="down">▼</button>
+                </div>
+                <div class="action-pad">
+                    <button id="mob-atk" class="act-btn atk-btn">⚔ ĐÁNH</button>
+                    <button id="mob-pickup" class="act-btn interact-btn">✋ E</button>
+                    <button id="mob-s1" class="act-btn sk-btn">1</button>
+                    <button id="mob-s2" class="act-btn sk-btn">2</button>
+                    <button id="mob-s3" class="act-btn sk-btn">3</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- KHO ĐỒ -->
+        <div id="inventory-modal" class="screen-overlay">
+            <div class="panel-window inv-window">
+                <h2 class="panel-title">🎒 KHO ĐỒ ANH HÙNG (<span id="inv-count">0</span>/16)</h2>
+                <div class="inv-layout">
+                    <div id="inv-grid" class="inv-grid"></div>
+                    <div id="inv-detail" class="inv-detail">
+                        <h3 id="item-title">Chọn một vật phẩm</h3>
+                        <span id="item-rarity" class="rarity-tag"></span>
+                        <p id="item-desc">Nhấn vào ô vật phẩm bên trái để xem thông tin chi tiết, trang bị vũ khí hoặc sử dụng bình thuốc.</p>
+                        <div id="item-stats" class="item-stats"></div>
+                        <div class="item-actions" id="item-actions">
+                            <button id="btn-use-item" class="pixel-btn primary-btn hidden">SỬ DỤNG / TRANG BỊ</button>
+                            <button id="btn-drop-item" class="pixel-btn danger-btn hidden">VỨT BỎ</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-actions">
+                    <button id="btn-close-inv" class="pixel-btn">ĐÓNG KHO ĐỒ (I)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TẠM DỪNG -->
+        <div id="pause-modal" class="screen-overlay">
+            <div class="panel-window">
+                <h2 class="panel-title">TẠM DỪNG TRÒ CHƠI</h2>
+                <div class="menu-buttons">
+                    <button id="btn-resume" class="pixel-btn primary-btn">▶ TIẾP TỤC</button>
+                    <button id="btn-pause-settings" class="pixel-btn">⚙ CÀI ĐẶT ÂM THANH</button>
+                    <button id="btn-restart" class="pixel-btn">🔄 CHƠI LẠI</button>
+                    <button id="btn-pause-home" class="pixel-btn danger-btn">🏠 VỀ TRANG CHỦ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- THẮNG / THUA -->
+        <div id="end-modal" class="screen-overlay">
+            <div class="panel-window">
+                <h2 id="end-title" class="panel-title">CHIẾN THẮNG!</h2>
+                <p id="end-subtitle">Bạn đã chinh phục hoàn toàn Hầm Ngục Xứ Ooo!</p>
+                <div id="end-stats" class="stats-summary"></div>
+                <div class="panel-actions">
+                    <button id="btn-end-restart" class="pixel-btn primary-btn">🔄 CHƠI LẠI</button>
+                    <button id="btn-end-char" class="pixel-btn">⚔ ĐỔI NHÂN VẬT</button>
+                    <button id="btn-end-home" class="pixel-btn">🏠 VỀ TRANG CHỦ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NẠP 3 FILE JAVASCRIPT ĐÃ ĐƯỢC TÁCH MODULE RÕ RÀNG -->
+    <script src="data.js"></script>
+    <script src="sprites.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
